@@ -1,0 +1,17 @@
+certifi==2020.6.20
+cffi==1.14.0
+chardet==3.0.4
+dnspython==1.16.0
+falcon==3.0.0a1
+gevent==20.6.2
+greenlet==0.4.13
+gunicorn==20.0.4
+idna==2.9
+monotonic==1.5
+pybase64==1.0.1
+readline==6.2.4.1
+requests==2.24.0
+six==1.15.0
+urllib3==1.25.9
+zope.event==4.4
+zope.interface==5.1.0
