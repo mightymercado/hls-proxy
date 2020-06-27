@@ -1,13 +1,21 @@
 # Fast HLS Proxy
 
-This is an HTTP/S server that redirects and rewrites encrypted HLS streams to avoid CORS and Geoblocking.
+This is a fast and lightweight HTTP/S server that redirects and rewrites encrypted HLS streams to avoid CORS and Geoblocking.
+
+# Benchmark
+
+| source | fast-hls-proxy | [hls-proxy](https://github.com/warren-bank/HLS-Proxy/tree/master/hls-proxy) |
+| - | - | - |
+| cloudfront | 200-300ms | 1.7ms-2.0ms |
 
 # Features
-1. Uses asynchronous IO with green threads 
-2. Uses fast string processing
-3. Lightweight / fast HTTP server with Falcon + Gunicorn
+1. Uses fast asynchronous IO with green threads (i.e. `gevent`)
+2. Uses fast byte string processing without regex and splits
+3. Uses lightweight / fast HTTP server with `Falcon` and `Gunicorn`
 4. Compatible with Pypy3
-5. Reused upstream connections with same host
+5. Uses persistent connections with urllib `PoolManager`
+6. Uses chunked response stream
+7. Proxies raw GZIP upstream data without decoding
 
 ## Todo
 1. Write todo
