@@ -3,14 +3,17 @@ monkey.patch_all()
 
 import falcon
 import re
+import logging
+logging.basicConfig(level=logging.DEBUG)
 
 from pybase64 import b64decode
 from requests import Session
-from collections import defaultdict
 from urllib.parse import urlparse, urljoin
 
 from handlers import handlers
 from consts import Constant
+from pools import pools
+
 
 def on_request(req, res):
   path = req.path[1:]
@@ -21,7 +24,6 @@ def on_request(req, res):
       url = b64decode(payload).decode()
       
       parsed_url = urlparse(url)
-      host = parsed_url.hostname
 
       handlers[ext](url, res)
       break

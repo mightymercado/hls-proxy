@@ -1,28 +1,42 @@
 from requests import Session
 from urllib.parse import ParseResult
 from modifier import proxied_m3u8
+from pools import pools
+import gzip
 
 import falcon
 
-session = Session()
+def chunked_read(up_res, chunk=64 * 1024, decode_content=None):
+  while True:
+    data = up_res.read(chunk, decode_content=decode_content)
+    if not data:
+      break
+    yield data
+
+def full_read(up_res, decode_content=None):
+  data = up_res.read(decode_content=decode_content)
+  return data
 
 def handle_ts(url: str, res) -> None:
-  up_res = session.get(url, stream=True)
+  up_res = pools.urlopen(url=url, method='GET', preload_content=False)
   res.content_type = up_res.headers.get('Content-Type', falcon.MEDIA_HTML)
-  res.status = falcon.code_to_http_status(up_res.status_code)
-  res.stream = up_res.iter_content()
+  res.status = falcon.code_to_http_status(up_res.status)
+  res.set_header('content-encoding', up_res.headers.get('content-encoding', ''))
+  res.stream = chunked_read(up_res, decode_content=False)
 
 def handle_m3u8(url: str, res) -> None:
-  up_res = session.get(url)
+  print("WTF???")
+  up_res = pools.urlopen(url=url, method='GET', preload_content=False)
   res.content_type = up_res.headers.get('Content-Type', falcon.MEDIA_HTML)
-  res.status = falcon.code_to_http_status(up_res.status_code)
-  res.body = '\n'.join(proxied_m3u8(url, up_res.text))
+  res.status = falcon.code_to_http_status(up_res.status)
+  res.set_header('content-encoding', 'gzip')
+  res.body = gzip.compress(b'\n'.join(proxied_m3u8(url, full_read(up_res))))
 
 def handle_key(url: str, res) -> None:
-  client_res = session.get(url)
+  up_res = pools.urlopen(url=url, method='GET', preload_content=False)
   res.content_type = up_res.headers.get('Content-Type', falcon.MEDIA_HTML)
-  res.status = falcon.code_to_http_status(up_res.status_code)
-  res.body = up_res.text
+  res.status = falcon.code_to_http_status(up_res.status)
+  res.body = full_read(up_res, decode_content=False)
 
 handlers = {
   '.ts': handle_ts,
