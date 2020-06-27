@@ -4,24 +4,24 @@ from pybase64 import b64encode
 
 from consts import Constant
 
-def is_key_line(line: str) -> bool:  
+def is_key_line(line: bytes) -> bool:  
   return line.startswith(Constant.EXT_KEY)
 
-def extract_key(line: str) -> Tuple[int, int]:
-  apos = '"'
+def extract_key(line: bytes) -> Tuple[int, int]:
+  apos = b'"'
   start = line.find(apos, len(Constant.EXT_KEY))
   end = line.find(apos, start)
   return (start + 1, end)
 
-def proxied_key_line(base: str, line: str) -> str:
+def proxied_key_line(base: bytes, line: bytes) -> bytes:
   start, end = extract_key(line)
   full_key = base + line[start:end]
-  b64_key = b64encode(full_key.encode()).decode()
-  proxied_key = f'{Constant.BASE_URL}{b64_key}.key'
+  b64_key = b64encode(full_key)
+  proxied_key = b'%b%b.key' % (Constant.BASE_URL, b64_key)
   return line[:start] + proxied_key + line[end + 1:]
 
-def proxied_m3u8(url: str, text: str) -> Iterable[str]:
-  base = url[:url.rfind('/') + 1]
+def proxied_m3u8(url: bytes, text: bytes) -> Iterable[bytes]:
+  base = url[:url.rfind(b'/') + 1]
   
   for line in text.splitlines():
     if is_key_line(line):

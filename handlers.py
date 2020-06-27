@@ -17,23 +17,22 @@ def full_read(up_res, decode_content=None):
   data = up_res.read(decode_content=decode_content)
   return data
 
-def handle_ts(url: str, res) -> None:
-  up_res = pools.urlopen(url=url, method='GET', preload_content=False)
+def handle_ts(url: bytes, res) -> None:
+  up_res = pools.urlopen(url=url.decode(), method='GET', preload_content=False)
   res.content_type = up_res.headers.get('Content-Type', falcon.MEDIA_HTML)
   res.status = falcon.code_to_http_status(up_res.status)
   res.set_header('content-encoding', up_res.headers.get('content-encoding', ''))
   res.stream = chunked_read(up_res, decode_content=False)
 
-def handle_m3u8(url: str, res) -> None:
-  print("WTF???")
-  up_res = pools.urlopen(url=url, method='GET', preload_content=False)
+def handle_m3u8(url: bytes, res) -> None:
+  up_res = pools.urlopen(url=url.decode(), method='GET', preload_content=False)
   res.content_type = up_res.headers.get('Content-Type', falcon.MEDIA_HTML)
   res.status = falcon.code_to_http_status(up_res.status)
   res.set_header('content-encoding', 'gzip')
   res.body = gzip.compress(b'\n'.join(proxied_m3u8(url, full_read(up_res))))
 
-def handle_key(url: str, res) -> None:
-  up_res = pools.urlopen(url=url, method='GET', preload_content=False)
+def handle_key(url: bytes, res) -> None:
+  up_res = pools.urlopen(url=url.decode(), method='GET', preload_content=False)
   res.content_type = up_res.headers.get('Content-Type', falcon.MEDIA_HTML)
   res.status = falcon.code_to_http_status(up_res.status)
   res.body = full_read(up_res, decode_content=False)
