@@ -37,7 +37,6 @@ def handle_key(url: bytes, res) -> None:
   up_res = pools.urlopen(url=url.decode(), method='GET', preload_content=False)
   res.content_type = up_res.headers.get('Content-Type', falcon.MEDIA_HTML)
   res.status = falcon.code_to_http_status(up_res.status)
-  res.set_header('content-encoding', 'gzip')
   res.set_header('Access-Control-Allow-Origin', '*')
   res.body = full_read(up_res, decode_content=False)
 
