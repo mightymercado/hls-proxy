@@ -20,7 +20,7 @@ def on_request(req, res):
 
   for ext in Constant.EXTS:
     if path.endswith(ext):
-      payload = path[:-len(ext)].encode() + b'==='
+      payload = path[:-len(ext)] + '==='
       url = b64decode(payload)
       
       parsed_url = urlparse(url)

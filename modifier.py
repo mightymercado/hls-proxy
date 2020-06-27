@@ -9,9 +9,9 @@ def is_key_line(line: bytes) -> bool:
 
 def extract_key(line: bytes) -> Tuple[int, int]:
   apos = b'"'
-  start = line.find(apos, len(Constant.EXT_KEY))
+  start = line.find(apos, len(Constant.EXT_KEY)) + 1
   end = line.find(apos, start)
-  return (start + 1, end)
+  return (start, end)
 
 def proxied_key_line(base: bytes, line: bytes) -> bytes:
   start, end = extract_key(line)
