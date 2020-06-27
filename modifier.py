@@ -15,10 +15,13 @@ def extract_key(line: bytes) -> Tuple[int, int]:
 
 def proxied_key_line(base: bytes, line: bytes) -> bytes:
   start, end = extract_key(line)
-  full_key = base + line[start:end]
-  b64_key = b64encode(full_key)
+  key = line[start:end]
+  if not key.startswith(b'http'):
+    key = base + key
+  print(key)
+  b64_key = b64encode(key)
   proxied_key = b'%b%b.key' % (Constant.BASE_URL, b64_key)
-  return line[:start] + proxied_key + line[end + 1:]
+  return line[:start] + proxied_key + line[end:]
 
 def proxied_m3u8(url: bytes, text: bytes) -> Iterable[bytes]:
   base = url[:url.rfind(b'/') + 1]
