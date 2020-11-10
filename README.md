@@ -6,7 +6,7 @@ This is a fast and lightweight HTTP/S server that redirects and rewrites encrypt
 
 | source | fast-hls-proxy | [hls-proxy](https://github.com/warren-bank/HLS-Proxy/tree/master/hls-proxy) |
 | - | - | - |
-| cloudfront | 200-300ms | 1.7ms-2.0ms |
+| cloudfront | 200-300ms | 1.7s-2.0s |
 
 # Features
 1. Uses fast asynchronous IO with green threads (i.e. `gevent`)
